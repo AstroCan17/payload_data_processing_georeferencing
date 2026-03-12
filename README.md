@@ -1,7 +1,7 @@
 # Satellite Image Processing Project
 
 ## Overview
-This project processes multi-band aerial imagery datasets for:
+This project processes multispectral aerial imagery datasets for:
 - Band segmentation
 - Inter-frame registration
 - Mosaic generation
