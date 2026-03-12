@@ -1,0 +1,23 @@
+# Temel kütüphaneler
+matplotlib
+numpy
+scikit-image
+opencv-python
+tqdm
+psutil
+imutils
+dask
+rasterio
+pandas
+pyproj
+# Kod kalitesi araçları
+pylint
+autopep8
+pytest
+black
+flake8
+isort
+
+# Bağımlılık yönetimi araçları
+pipreqs
+pip-tools 

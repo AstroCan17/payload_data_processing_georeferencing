@@ -1,0 +1,85 @@
+# Data files
+data/input_frames/*
+data/processed/*
+!data/input_frames/.gitkeep
+!data/processed/.gitkeep
+!data/metadata/.gitkeep
+
+# TIFF files
+*.tif
+*.tiff
+*.TIF
+*.TIFF
+
+# Document files
+*.doc
+*.docx
+*.pdf
+*.ppt
+*.pptx
+
+# IMU / raw data (only under data/, do not ignore requirements.txt etc.)
+data/**/*.txt
+data/**/*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE / Editor / Local tooling (do not push to remote)
+.idea/
+.vscode/
+.cursor/
+*.code-workspace
+*.swp
+*.swo
+*~
+*.bak
+*.backup
+
+# Environment and secrets (do not push)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+docs/Problem_statement_Principal_Image_Processing_Scientist.md

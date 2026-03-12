@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    image: payload-geo:latest
+    container_name: payload-geo
+    volumes:
+      - .:/workspaces/payload_data_processing_georeferencing
+    working_dir: /workspaces/payload_data_processing_georeferencing
+    stdin_open: true
+    tty: true
+    command: bash
