@@ -15,7 +15,7 @@ This project processes multispectral aerial imagery datasets for:
 The environment runs in Docker; distributed processing uses Dask. Only Docker is required on the host.
 
 ```bash
-git clone https://github.com/yourusername/payload_data_processing_georeferencing.git
+git clone https://github.com/AstroCan17/payload_data_processing_georeferencing.git
 cd payload_data_processing_georeferencing
 docker compose build
 docker compose run --rm app bash
