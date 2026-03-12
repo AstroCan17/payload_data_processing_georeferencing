@@ -105,6 +105,27 @@ pipeline.set_config({
 result = pipeline.run(input_data)
 ```
 
+### Lazy image reading (Dask)
+
+For large frame sets (e.g. `data/input_frames/.../ImageFrames/`), load images as a Dask array so only needed frames are read into memory:
+
+```python
+from src.utils import imread_lazy, imread_lazy_with_paths
+
+# Directory or glob pattern
+stack = imread_lazy("data/input_frames/AerialData_GeoModule/ImageFrames/")
+# stack.shape -> (n_frames, height, width), one chunk per frame
+
+# Single frame (loads one file)
+frame_0 = stack[0].compute()
+
+# Slice (loads only those files)
+batch = stack[10:20].compute()
+
+# With paths (e.g. for metadata / output naming)
+stack, paths = imread_lazy_with_paths("data/input_frames/.../ImageFrames/")
+```
+
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
