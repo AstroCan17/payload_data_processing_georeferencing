@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import glob
 import os
-from typing import List, Tuple, Union
+from typing import Iterable, List, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -31,6 +31,57 @@ def _get_shape_dtype(path: str) -> Tuple[Tuple[int, ...], np.dtype]:
         h, w = src.height, src.width
         dtype = np.dtype(src.dtypes[0])
     return (h, w), dtype
+
+
+def _resolve_paths(
+    path_or_pattern: Union[str, List[str]],
+    sort: bool = True,
+) -> List[str]:
+    """Resolve a directory, glob pattern, single path, or path list to files."""
+    if isinstance(path_or_pattern, list):
+        if not path_or_pattern:
+            raise FileNotFoundError("No files found for: []")
+        if not all(isinstance(path, str) for path in path_or_pattern):
+            raise TypeError("path_or_pattern list entries must be strings")
+        paths = [os.path.abspath(path) for path in path_or_pattern]
+    elif isinstance(path_or_pattern, str):
+        normalized = os.path.normpath(path_or_pattern)
+        if os.path.isdir(normalized):
+            pattern = os.path.join(normalized, "*.tiff")
+            paths = glob.glob(pattern)
+        elif os.path.isfile(normalized):
+            paths = [os.path.abspath(normalized)]
+        else:
+            paths = glob.glob(normalized)
+    else:
+        raise TypeError("path_or_pattern must be a string or list of strings")
+
+    if not paths:
+        raise FileNotFoundError(f"No files found for: {path_or_pattern}")
+
+    return sorted(paths) if sort else paths
+
+
+def _validate_stack_metadata(paths: Iterable[str]) -> Tuple[Tuple[int, ...], np.dtype]:
+    """Ensure every file in the stack has the same 2D shape and dtype."""
+    iterator = iter(paths)
+    first_path = next(iterator)
+    expected_shape, expected_dtype = _get_shape_dtype(first_path)
+
+    for path in iterator:
+        shape, dtype = _get_shape_dtype(path)
+        if shape != expected_shape:
+            raise ValueError(
+                "All files must have the same shape; "
+                f"expected {expected_shape} but got {shape} for {path}"
+            )
+        if dtype != expected_dtype:
+            raise ValueError(
+                "All files must have the same dtype; "
+                f"expected {expected_dtype} but got {dtype} for {path}"
+            )
+
+    return expected_shape, expected_dtype
 
 
 def imread_lazy(
@@ -60,22 +111,8 @@ def imread_lazy(
         >>> frame_0 = stack[0].compute()
         >>> batch = stack[10:20].compute()
     """
-    if isinstance(path_or_pattern, list):
-        paths = [os.path.abspath(p) for p in path_or_pattern]
-    else:
-        path_or_pattern = os.path.normpath(path_or_pattern)
-        if os.path.isdir(path_or_pattern):
-            pattern = os.path.join(path_or_pattern, "*.tiff")
-        else:
-            pattern = path_or_pattern
-        paths = glob.glob(pattern)
-    if not paths:
-        raise FileNotFoundError(f"No files found for: {path_or_pattern}")
-
-    if sort:
-        paths = sorted(paths)
-
-    shape_2d, dtype = _get_shape_dtype(paths[0])
+    paths = _resolve_paths(path_or_pattern, sort=sort)
+    shape_2d, dtype = _validate_stack_metadata(paths)
     frame_shape = shape_2d  # (H, W), single band
 
     delayed_frames = [delayed(_read_frame)(p) for p in paths]
@@ -100,20 +137,6 @@ def imread_lazy_with_paths(
     Returns:
         (dask_array, paths): stack shape (n_frames, H, W), list of paths.
     """
-    if isinstance(path_or_pattern, list):
-        paths = [os.path.abspath(p) for p in path_or_pattern]
-    else:
-        path_or_pattern = os.path.normpath(path_or_pattern)
-        if os.path.isdir(path_or_pattern):
-            pattern = os.path.join(path_or_pattern, "*.tiff")
-        else:
-            pattern = path_or_pattern
-        paths = glob.glob(pattern)
-    if not paths:
-        raise FileNotFoundError(f"No files found for: {path_or_pattern}")
-
-    if sort:
-        paths = sorted(paths)
-
+    paths = _resolve_paths(path_or_pattern, sort=sort)
     stack = imread_lazy(paths, sort=False)
     return stack, paths

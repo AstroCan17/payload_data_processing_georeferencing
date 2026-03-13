@@ -1,26 +1,17 @@
 # Documentation
 
-This directory contains the project documentation.
+This directory tracks the migration from legacy scripts to the `src`-based project structure.
 
-## Structure
+## Available Documents
+- `architecture.md`: target architecture and what is already implemented
+- `workflows.md`: current recommended development workflow
+- `migration_status.md`: active migration decisions, constraints, and next steps
 
-- `api/`: API documentation and reference
-- `user_guide/`: End-user documentation and tutorials
-- `development/`: Developer documentation and guidelines
+## Current State
+- `src/` is the active development surface
+- Dask lazy TIFF reading is the most stable implemented feature
+- `scripts/` is legacy reference code and should not be used as the primary entrypoint
+- algorithm pipeline modules remain transitional
 
 ## Building Documentation
-
-To build the documentation locally:
-
-1. Install dependencies:
-```bash
-pip install -r requirements/requirements-dev.txt
-```
-
-2. Build documentation:
-```bash
-cd docs
-make html
-```
-
-Documentation will be available in `_build/html/`. 
+There is no separate generated documentation pipeline in this iteration. Keep the Markdown files in `docs/` as the source of truth until a dedicated docs stack is introduced.
